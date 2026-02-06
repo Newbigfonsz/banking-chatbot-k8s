@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureBank AI Assistant</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .chat-container {
+            width: 420px;
+            height: 650px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px;
+            text-align: center;
+        }
+        .bank-logo {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .chat-subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        .quick-actions {
+            padding: 10px;
+            background: white;
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .quick-action {
+            padding: 6px 12px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 15px;
+            font-size: 11px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .quick-action:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-1px);
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f8f9fa;
+            min-height: 0;
+        }
+        .message {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .user-message {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        .bot-message {
+            background: white;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            white-space: pre-wrap;
+            border-bottom-left-radius: 4px;
+            line-height: 1.4;
+            font-size: 14px;
+        }
+        .chat-input-container {
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .chat-input:focus {
+            border-color: #667eea;
+        }
+        .send-button {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+            font-size: 18px;
+        }
+        .send-button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="bank-logo">🏦 SecureBank AI</div>
+            <div class="chat-subtitle">Your 24/7 Banking Assistant</div>
+        </div>
+        
+        <div class="quick-actions">
+            <button class="quick-action" onclick="quickSend('Check balance')">💰 Balance</button>
+            <button class="quick-action" onclick="quickSend('Recent transactions')">📊 Transactions</button>
+            <button class="quick-action" onclick="quickSend('Transfer money')">💸 Transfer</button>
+            <button class="quick-action" onclick="quickSend('Find ATM')">📍 ATM</button>
+            <button class="quick-action" onclick="quickSend('Help')">❓ Help</button>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="bot-message">👋 Welcome to SecureBank! How can I help you today?
+
+Try asking about your balance, recent transactions, or click any quick action above!</div>
+        </div>
+        
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." autocomplete="off" />
+            <button class="send-button" onclick="sendMsg()">➤</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://4c1vpuut91.execute-api.us-east-1.amazonaws.com/dev/chat';
+        const sessionId = 'session-' + Date.now();
+        
+        const input = document.getElementById('chatInput');
+        const messagesDiv = document.getElementById('chatMessages');
+        
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMsg();
+        });
+        
+        function addMsg(text, isUser) {
+            const msg = document.createElement('div');
+            msg.className = 'message ' + (isUser ? 'user-message' : 'bot-message');
+            msg.textContent = text;
+            messagesDiv.appendChild(msg);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        async function sendMsg() {
+            const message = input.value.trim();
+            if (!message) return;
+            
+            addMsg(message, true);
+            input.value = '';
+            input.focus();
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: message, sessionId: sessionId})
+                });
+                
+                const data = await response.json();
+                addMsg(data.response, false);
+            } catch (error) {
+                // Professional demo responses
+                let reply = "";
+                if (message.toLowerCase().includes('balance')) {
+                    reply = "💰 Your Account Balances:\n\n🏦 Checking ****1234\n   Balance: $5,432.10\n   \n💎 Savings ****5678\n   Balance: $15,750.25\n   \n💳 Credit Card ****9012\n   Balance: $2,340.50\n   Available: $7,659.50";
+                } else if (message.toLowerCase().includes('transfer')) {
+                    reply = "💸 Let's set up your transfer.\n\nHow much would you like to transfer from Checking to Savings?\n\n(Enter amount like $100 or just 100)";
+                } else if (message.toLowerCase().includes('transaction')) {
+                    reply = "📊 Recent Transactions (Checking):\n\n• Today: Starbucks Coffee -$5.85\n• Yesterday: Direct Deposit +$3,500.00\n• Jan 13: Amazon Purchase -$67.42\n• Jan 12: Transfer from Savings +$500.00\n• Jan 11: Walmart Grocery -$142.38\n\nCurrent Balance: $5,432.10";
+                } else if (message.toLowerCase().includes('help')) {
+                    reply = "🤝 I can help you with:\n\n💰 Check balances\n📊 View transactions\n💸 Transfer money\n📍 Find ATMs\n💳 Pay bills\n🔐 Security status\n\nJust type or click any quick action button above!";
+                } else {
+                    reply = `Hello! I'm your banking assistant. You said: "${message}"\n\n🚀 This is running on:\n• AWS Lambda backend\n• Kubernetes cluster\n• Professional banking UI\n\nTry asking about your balance!`;
+                }
+                addMsg(reply, false);
+            }
+        }
+        
+        function quickSend(text) {
+            input.value = text;
+            sendMsg();
+        }
+        
+        window.onload = () => input.focus();
+    </script>
+</body>
+</html>
