@@ -9,291 +9,329 @@ data:
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>SecureBank AI Assistant</title>
+        <title>SecureBank - Next-Gen AI Banking</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
         <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                height: 100vh;
-                display: flex;
-                justify-content: center;
-                align-items: center;
+            :root {
+                --bg:#09090b;--bg2:#0f0f13;
+                --card:rgba(255,255,255,0.03);--card-h:rgba(255,255,255,0.06);
+                --bdr:rgba(255,255,255,0.06);--bdr-h:rgba(255,255,255,0.12);
+                --t1:#fafafa;--t2:#a1a1aa;--t3:#52525b;
+                --green:#22c55e;--emerald:#10b981;--cyan:#06b6d4;
+                --amber:#f59e0b;--rose:#f43f5e;--purple:#a855f7;
             }
-            .sr-only {
-                position: absolute;
-                width: 1px;
-                height: 1px;
-                padding: 0;
-                margin: -1px;
-                overflow: hidden;
-                clip: rect(0, 0, 0, 0);
-                white-space: nowrap;
-                border: 0;
+            *{margin:0;padding:0;box-sizing:border-box;}
+            body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden;line-height:1.6;}
+            .mono{font-family:'JetBrains Mono',monospace;}
+
+            /* Ambient orbs */
+            .orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;}
+            .orb1{width:600px;height:600px;background:radial-gradient(circle,var(--green),transparent 70%);top:-200px;right:-100px;opacity:.1;animation:fl 20s ease-in-out infinite;}
+            .orb2{width:500px;height:500px;background:radial-gradient(circle,var(--emerald),transparent 70%);bottom:-150px;left:-100px;opacity:.08;animation:fl 25s ease-in-out infinite reverse;}
+            .orb3{width:400px;height:400px;background:radial-gradient(circle,var(--cyan),transparent 70%);top:40%;left:60%;opacity:.06;animation:fl 22s ease-in-out infinite 5s;}
+            .orb{filter:blur(120px);}
+            @keyframes fl{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(30px,-20px) scale(1.05);}66%{transform:translate(-20px,15px) scale(0.95);}}
+
+            /* Layout */
+            .wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 1.5rem;}
+
+            /* Nav */
+            .nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--bdr);margin-bottom:2rem;}
+            .nav-brand{font-weight:800;font-size:1.1rem;color:var(--t1);text-decoration:none;display:flex;align-items:center;gap:.5rem;}
+            .nav-brand svg{width:24px;height:24px;}
+            .nav-pills{display:flex;gap:.5rem;align-items:center;}
+            .pill{font-family:'JetBrains Mono',monospace;font-size:.7rem;padding:.3rem .7rem;border:1px solid var(--bdr);border-radius:99px;color:var(--t2);background:var(--card);display:flex;align-items:center;gap:.4rem;}
+            .pill.live::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+            @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+            .nav-back{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--t2);text-decoration:none;padding:.4rem .8rem;border:1px solid var(--bdr);border-radius:8px;transition:all .2s;}
+            .nav-back:hover{background:var(--card-h);border-color:var(--bdr-h);color:var(--t1);}
+
+            /* Hero */
+            .hero{text-align:center;padding:3rem 0 2rem;animation:fu .6s ease-out both;}
+            .hero-label{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--t3);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1rem;}
+            .hero h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-.03em;line-height:1.1;margin-bottom:1rem;background:linear-gradient(135deg,var(--green),var(--emerald),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+            .hero p{color:var(--t2);font-size:clamp(.9rem,2vw,1.05rem);max-width:520px;margin:0 auto;}
+            @keyframes fu{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+            /* Capabilities */
+            .caps{display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem;padding:1.5rem 0;animation:fu .6s ease-out .1s both;}
+            .cap{display:flex;align-items:center;gap:.5rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--t2);padding:.45rem .85rem;border:1px solid var(--bdr);border-radius:99px;background:var(--card);transition:all .2s;cursor:default;}
+            .cap:hover{border-color:var(--bdr-h);background:var(--card-h);}
+            .cap-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+            /* Stats */
+            .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bdr);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;margin:1.5rem 0;animation:fu .6s ease-out .2s both;}
+            .stat{background:var(--bg);padding:1.2rem;text-align:center;transition:background .2s;}
+            .stat:hover{background:var(--bg2);}
+            .stat-val{font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:600;margin-bottom:.3rem;}
+            .stat-label{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;}
+            .c1{color:var(--green);}.c2{color:var(--cyan);}.c3{color:var(--amber);}
+
+            /* Account Cards */
+            .accounts-label{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--t3);text-transform:uppercase;letter-spacing:.15em;margin-bottom:.8rem;animation:fu .6s ease-out .25s both;}
+            .accounts{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-bottom:2rem;animation:fu .6s ease-out .3s both;}
+            .acct{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:1.2rem;position:relative;overflow:hidden;transition:all .2s;}
+            .acct:hover{border-color:var(--bdr-h);background:var(--card-h);transform:translateY(-2px);}
+            .acct-accent{position:absolute;left:0;top:0;bottom:0;width:3px;}
+            .acct-type{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem;}
+            .acct-num{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--t2);margin-bottom:.8rem;}
+            .acct-bal{font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:600;color:var(--t1);}
+            .acct-label{font-size:.7rem;color:var(--t3);margin-top:.3rem;}
+
+            /* Chat Panel */
+            .chat-section{animation:fu .6s ease-out .35s both;margin-bottom:2rem;}
+            .chat-pnl{border:1px solid var(--bdr);border-radius:16px;overflow:hidden;background:var(--bg2);display:flex;flex-direction:column;height:480px;}
+            .chat-hd{display:flex;align-items:center;gap:.6rem;padding:.8rem 1rem;border-bottom:1px solid var(--bdr);background:var(--card);}
+            .chat-icon{width:32px;height:32px;border-radius:8px;background:rgba(34,197,94,.15);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+            .chat-title{font-weight:600;font-size:.9rem;flex:1;}
+            .chat-status{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--green);display:flex;align-items:center;gap:.3rem;}
+            .chat-status::before{content:'';width:5px;height:5px;background:var(--green);border-radius:50%;animation:pulse 2s infinite;}
+            .chat-clear{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--t3);background:none;border:1px solid var(--bdr);border-radius:6px;padding:.25rem .5rem;cursor:pointer;transition:all .2s;}
+            .chat-clear:hover{border-color:var(--bdr-h);color:var(--t2);}
+
+            .msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.8rem;min-height:0;}
+            .msgs::-webkit-scrollbar{width:4px;}
+            .msgs::-webkit-scrollbar-track{background:transparent;}
+            .msgs::-webkit-scrollbar-thumb{background:var(--bdr-h);border-radius:2px;}
+
+            .msg{display:flex;gap:.6rem;max-width:85%;animation:fu .3s ease-out;}
+            .msg.user{flex-direction:row-reverse;margin-left:auto;}
+            .msg-av{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+            .msg.bot .msg-av{background:rgba(34,197,94,.15);}
+            .msg.user .msg-av{background:rgba(59,130,246,.15);}
+            .msg-bubble{padding:.7rem 1rem;border-radius:12px;font-size:.85rem;line-height:1.55;white-space:pre-wrap;word-break:break-word;}
+            .msg.bot .msg-bubble{background:var(--card-h);border:1px solid var(--bdr);border-bottom-left-radius:4px;}
+            .msg.user .msg-bubble{background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(16,185,129,.08));border:1px solid rgba(34,197,94,.2);border-bottom-right-radius:4px;}
+            .msg-time{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);margin-top:.3rem;}
+            .msg.user .msg-time{text-align:right;}
+
+            .typing{display:flex;gap:4px;padding:.8rem 1rem;background:var(--card-h);border:1px solid var(--bdr);border-radius:12px;border-bottom-left-radius:4px;width:fit-content;animation:fu .3s;}
+            .typing span{width:6px;height:6px;background:var(--green);border-radius:50%;animation:bounce .6s infinite alternate;}
+            .typing span:nth-child(2){animation-delay:.2s;}
+            .typing span:nth-child(3){animation-delay:.4s;}
+            @keyframes bounce{from{transform:translateY(0);opacity:.4;}to{transform:translateY(-6px);opacity:1;}}
+
+            .chat-input-area{padding:.8rem 1rem;border-top:1px solid var(--bdr);display:flex;gap:.6rem;align-items:flex-end;}
+            .chat-input{flex:1;background:var(--card-h);border:1px solid var(--bdr);border-radius:10px;padding:.6rem .8rem;color:var(--t1);font-family:'Inter',sans-serif;font-size:.85rem;resize:none;outline:none;min-height:40px;max-height:100px;transition:border-color .2s;line-height:1.4;}
+            .chat-input:focus{border-color:rgba(34,197,94,.4);}
+            .chat-input::placeholder{color:var(--t3);}
+            .send-btn{width:40px;height:40px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--green),var(--emerald));color:#000;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;font-size:16px;}
+            .send-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(34,197,94,.35);}
+            .send-btn:disabled{opacity:.3;cursor:not-allowed;transform:none;box-shadow:none;}
+
+            .suggestions{display:flex;flex-wrap:wrap;gap:.4rem;padding:.5rem 1rem .8rem;border-top:1px solid var(--bdr);}
+            .sug{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--t2);padding:.35rem .65rem;border:1px solid var(--bdr);border-radius:8px;background:var(--card);cursor:pointer;transition:all .2s;}
+            .sug:hover{border-color:rgba(34,197,94,.3);color:var(--green);background:rgba(34,197,94,.05);}
+
+            /* Footer */
+            .footer{text-align:center;padding:1.5rem 0 2rem;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--t3);border-top:1px solid var(--bdr);margin-top:1rem;}
+            .footer a{color:var(--t2);text-decoration:none;}
+            .footer a:hover{color:var(--t1);}
+
+            /* Responsive */
+            @media(max-width:768px){
+                .accounts{grid-template-columns:1fr;}
+                .stats{grid-template-columns:repeat(3,1fr);}
             }
-            .chat-container {
-                width: 100%;
-                height: 100vh;
-                background: white;
-                display: flex;
-                flex-direction: column;
-                overflow: hidden;
-                animation: slideUp 0.5s ease-out;
+            @media(max-width:640px){
+                .nav-pills{display:none;}
+                .wrap{padding:0 1rem;}
+                .hero{padding:2rem 0 1.5rem;}
+                .msg{max-width:92%;}
+                .accounts{grid-template-columns:1fr;}
+                .chat-pnl{height:420px;}
             }
-            @media (min-width: 520px) {
-                .chat-container {
-                    width: 480px;
-                    max-height: 700px;
-                    height: 90vh;
-                    border-radius: 20px;
-                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-                }
-            }
-            @keyframes slideUp {
-                from { transform: translateY(30px); opacity: 0; }
-                to { transform: translateY(0); opacity: 1; }
-            }
-            .chat-header {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                padding: 18px;
-                text-align: center;
-            }
-            .bank-logo { font-size: 22px; font-weight: bold; margin-bottom: 4px; }
-            .header-subtitle { font-size: 13px; opacity: 0.9; }
-            .quick-actions {
-                padding: 10px;
-                background: white;
-                display: flex;
-                gap: 6px;
-                overflow-x: auto;
-                border-bottom: 1px solid #e0e0e0;
-                -webkit-overflow-scrolling: touch;
-            }
-            .quick-action {
-                padding: 6px 12px;
-                background: #f0f0f0;
-                border: none;
-                border-radius: 15px;
-                font-size: 12px;
-                cursor: pointer;
-                white-space: nowrap;
-                transition: background 0.2s, color 0.2s, transform 0.2s;
-            }
-            .quick-action:hover {
-                background: #667eea;
-                color: white;
-                transform: translateY(-1px);
-            }
-            .quick-action:focus-visible {
-                outline: 3px solid #667eea;
-                outline-offset: 2px;
-            }
-            .chat-messages {
-                flex: 1;
-                overflow-y: auto;
-                padding: 15px;
-                background: #f8f9fa;
-                min-height: 0;
-                scroll-behavior: smooth;
-            }
-            .message {
-                max-width: 85%;
-                padding: 10px 14px;
-                border-radius: 16px;
-                margin-bottom: 12px;
-                animation: fadeIn 0.3s;
-            }
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(5px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-            .user-message {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                margin-left: auto;
-                border-bottom-right-radius: 4px;
-            }
-            .bot-message {
-                background: white;
-                color: #333;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-                white-space: pre-wrap;
-                border-bottom-left-radius: 4px;
-                line-height: 1.5;
-                font-size: 14px;
-            }
-            .message-time {
-                font-size: 10px;
-                opacity: 0.5;
-                margin-top: 4px;
-            }
-            .user-message .message-time { text-align: right; }
-            .bot-message .message-time { text-align: left; }
-            .typing-indicator {
-                display: flex;
-                gap: 4px;
-                padding: 12px 16px;
-                background: white;
-                border-radius: 16px;
-                border-bottom-left-radius: 4px;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.08);
-                margin-bottom: 12px;
-                width: fit-content;
-                animation: fadeIn 0.3s;
-            }
-            .typing-indicator span {
-                width: 8px;
-                height: 8px;
-                background: #667eea;
-                border-radius: 50%;
-                animation: typingBounce 1.4s infinite ease-in-out both;
-            }
-            .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-            .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-            .typing-indicator span:nth-child(3) { animation-delay: 0s; }
-            @keyframes typingBounce {
-                0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-                40% { transform: scale(1); opacity: 1; }
-            }
-            .error-message {
-                background: #fff3f3;
-                color: #d32f2f;
-                border: 1px solid #ffcdd2;
-                padding: 10px 14px;
-                border-radius: 16px;
-                margin-bottom: 12px;
-                font-size: 13px;
-                animation: fadeIn 0.3s;
-            }
-            .chat-input-container {
-                padding: 15px;
-                background: white;
-                border-top: 1px solid #e0e0e0;
-                display: flex;
-                gap: 10px;
-            }
-            .chat-input {
-                flex: 1;
-                padding: 10px 15px;
-                border: 2px solid #e0e0e0;
-                border-radius: 25px;
-                outline: none;
-                font-size: 14px;
-                transition: border-color 0.2s;
-            }
-            .chat-input:focus { border-color: #667eea; }
-            .chat-input:focus-visible {
-                outline: 3px solid #667eea;
-                outline-offset: 2px;
-            }
-            .chat-input:disabled {
-                background: #f5f5f5;
-                color: #999;
-            }
-            .send-button {
-                width: 42px;
-                height: 42px;
-                border-radius: 50%;
-                border: none;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: transform 0.2s;
-                font-size: 18px;
-            }
-            .send-button:hover { transform: scale(1.05); }
-            .send-button:focus-visible {
-                outline: 3px solid #667eea;
-                outline-offset: 2px;
-            }
-            .send-button:disabled {
-                opacity: 0.5;
-                cursor: not-allowed;
-                transform: none;
-            }
+
+            /* sr-only for accessibility */
+            .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
         </style>
     </head>
     <body>
-        <div class="chat-container">
-            <header class="chat-header" role="banner">
-                <div class="bank-logo">SecureBank AI</div>
-                <div class="header-subtitle">Your 24/7 Banking Assistant</div>
-            </header>
-            <nav class="quick-actions" role="navigation" aria-label="Quick actions">
-                <button class="quick-action" onclick="quickSend('Check balance')" aria-label="Check balance">Balance</button>
-                <button class="quick-action" onclick="quickSend('Recent transactions')" aria-label="Recent transactions">Transactions</button>
-                <button class="quick-action" onclick="quickSend('Transfer money')" aria-label="Transfer money">Transfer</button>
-                <button class="quick-action" onclick="quickSend('Find ATM')" aria-label="Find nearby ATM">ATM</button>
-                <button class="quick-action" onclick="quickSend('Help')" aria-label="Get help">Help</button>
-            </nav>
-            <main class="chat-messages" id="chatMessages" role="log" aria-live="polite" aria-label="Chat messages">
-                <div class="message bot-message">
-                    <div class="message-content">Welcome to SecureBank! How can I help you today?
+        <div class="orb orb1"></div>
+        <div class="orb orb2"></div>
+        <div class="orb orb3"></div>
 
-    Try asking about your balance, recent transactions, or click any quick action above.</div>
+        <div class="wrap">
+            <!-- Nav -->
+            <nav class="nav" role="navigation">
+                <a href="https://alphonzojonesjr.com" class="nav-brand">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                    SecureBank
+                </a>
+                <div class="nav-pills">
+                    <span class="pill live">Live</span>
+                    <span class="pill">AI-Powered</span>
+                    <span class="pill">256-bit Encrypted</span>
                 </div>
-            </main>
-            <span id="statusAnnouncer" class="sr-only" role="status" aria-live="assertive"></span>
-            <div class="chat-input-container" role="form" aria-label="Message input">
-                <label for="chatInput" class="sr-only">Type your message</label>
-                <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." autocomplete="off" aria-label="Type your message" />
-                <button class="send-button" id="sendButton" onclick="sendMsg()" aria-label="Send message">&#10148;</button>
+            </nav>
+
+            <!-- Hero -->
+            <section class="hero">
+                <div class="hero-label mono">Secure Digital Banking</div>
+                <h1>Next-Gen Banking,<br>Powered by AI</h1>
+                <p>Intelligent financial management with real-time AI assistance, deployed on Kubernetes with enterprise-grade security.</p>
+            </section>
+
+            <!-- Capabilities -->
+            <div class="caps" role="list" aria-label="Platform capabilities">
+                <span class="cap" role="listitem"><span class="cap-dot" style="background:var(--green)"></span>Balance Check</span>
+                <span class="cap" role="listitem"><span class="cap-dot" style="background:var(--emerald)"></span>Transfers</span>
+                <span class="cap" role="listitem"><span class="cap-dot" style="background:var(--cyan)"></span>Bill Pay</span>
+                <span class="cap" role="listitem"><span class="cap-dot" style="background:var(--amber)"></span>ATM Finder</span>
+                <span class="cap" role="listitem"><span class="cap-dot" style="background:var(--rose)"></span>Fraud Alerts</span>
+                <span class="cap" role="listitem"><span class="cap-dot" style="background:var(--purple)"></span>Investments</span>
             </div>
+
+            <!-- Stats -->
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-val c1">99.9%</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-val c2">$2.4M+</div>
+                    <div class="stat-label">Processed</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-val c3">24/7</div>
+                    <div class="stat-label">AI Support</div>
+                </div>
+            </div>
+
+            <!-- Account Cards -->
+            <div class="accounts-label">Your Accounts</div>
+            <div class="accounts">
+                <div class="acct">
+                    <div class="acct-accent" style="background:var(--green)"></div>
+                    <div class="acct-type">Checking</div>
+                    <div class="acct-num mono">****1234</div>
+                    <div class="acct-bal c1">$5,432.10</div>
+                    <div class="acct-label">Available balance</div>
+                </div>
+                <div class="acct">
+                    <div class="acct-accent" style="background:var(--emerald)"></div>
+                    <div class="acct-type">Savings</div>
+                    <div class="acct-num mono">****5678</div>
+                    <div class="acct-bal c2">$15,750.25</div>
+                    <div class="acct-label">Total balance</div>
+                </div>
+                <div class="acct">
+                    <div class="acct-accent" style="background:var(--cyan)"></div>
+                    <div class="acct-type">Credit Card</div>
+                    <div class="acct-num mono">****9012</div>
+                    <div class="acct-bal" style="color:var(--cyan)">$2,340.50</div>
+                    <div class="acct-label">Available credit</div>
+                </div>
+            </div>
+
+            <!-- Chat Panel -->
+            <div class="chat-section">
+                <div class="chat-pnl">
+                    <div class="chat-hd">
+                        <div class="chat-icon">&#9733;</div>
+                        <div class="chat-title">SecureBank AI</div>
+                        <div class="chat-status">Online</div>
+                        <button class="chat-clear" id="clearBtn" aria-label="Clear chat">Clear</button>
+                    </div>
+                    <div class="msgs" id="chatMessages" role="log" aria-live="polite" aria-label="Chat messages">
+                        <div class="msg bot">
+                            <div class="msg-av">&#9733;</div>
+                            <div>
+                                <div class="msg-bubble">Welcome to SecureBank AI. I can help you check balances, review transactions, make transfers, find ATMs, and more. How can I assist you today?</div>
+                                <div class="msg-time mono" id="welcomeTime"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="suggestions" id="suggestions">
+                        <button class="sug" onclick="quickSend('Check my balance')">Check balance</button>
+                        <button class="sug" onclick="quickSend('Recent transactions')">Transactions</button>
+                        <button class="sug" onclick="quickSend('Transfer money')">Transfer</button>
+                        <button class="sug" onclick="quickSend('Find nearest ATM')">Find ATM</button>
+                        <button class="sug" onclick="quickSend('What can you help with?')">Help</button>
+                    </div>
+                    <div class="chat-input-area" role="form" aria-label="Message input">
+                        <label for="msgInput" class="sr-only">Type your message</label>
+                        <textarea class="chat-input" id="msgInput" placeholder="Ask SecureBank AI..." rows="1" autocomplete="off"></textarea>
+                        <button class="send-btn" id="sendBtn" onclick="sendMsg()" aria-label="Send message">&#10148;</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <span>SecureBank AI Demo</span> &middot;
+                <span>Kubernetes + AWS Lambda</span> &middot;
+                <a href="https://alphonzojonesjr.com">alphonzojonesjr.com</a>
+            </footer>
         </div>
+
         <script>
             var API_URL = 'https://4c1vpuut91.execute-api.us-east-1.amazonaws.com/dev/chat';
             var sessionId = 'session-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-            var input = document.getElementById('chatInput');
-            var messagesDiv = document.getElementById('chatMessages');
-            var sendBtn = document.getElementById('sendButton');
-            var announcer = document.getElementById('statusAnnouncer');
+            var inputEl = document.getElementById('msgInput');
+            var msgsEl = document.getElementById('chatMessages');
+            var sendBtn = document.getElementById('sendBtn');
+            var clearBtn = document.getElementById('clearBtn');
+            var sugsEl = document.getElementById('suggestions');
 
-            input.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter' && !sendBtn.disabled) sendMsg();
+            document.getElementById('welcomeTime').textContent = formatTime();
+
+            inputEl.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+            });
+            inputEl.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+            });
+
+            clearBtn.addEventListener('click', function() {
+                msgsEl.textContent = '';
+                addMsg('Chat cleared. How can I help you?', false);
+                sugsEl.style.display = 'flex';
             });
 
             function formatTime() {
-                var now = new Date();
-                return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             }
 
             function addMsg(text, isUser) {
-                var msg = document.createElement('div');
-                msg.className = 'message ' + (isUser ? 'user-message' : 'bot-message');
-                var content = document.createElement('div');
-                content.className = 'message-content';
-                content.textContent = text;
-                msg.appendChild(content);
-                var time = document.createElement('div');
-                time.className = 'message-time';
-                time.textContent = formatTime();
-                msg.appendChild(time);
-                messagesDiv.appendChild(msg);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            }
+                var wrapper = document.createElement('div');
+                wrapper.className = 'msg ' + (isUser ? 'user' : 'bot');
 
-            function addErrorMsg(text) {
-                var msg = document.createElement('div');
-                msg.className = 'error-message';
-                msg.setAttribute('role', 'alert');
-                msg.textContent = text;
-                messagesDiv.appendChild(msg);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                var av = document.createElement('div');
+                av.className = 'msg-av';
+                av.textContent = isUser ? '\u25CB' : '\u2733';
+
+                var inner = document.createElement('div');
+                var bubble = document.createElement('div');
+                bubble.className = 'msg-bubble';
+                bubble.textContent = text;
+                inner.appendChild(bubble);
+
+                var time = document.createElement('div');
+                time.className = 'msg-time mono';
+                time.textContent = formatTime();
+                inner.appendChild(time);
+
+                wrapper.appendChild(av);
+                wrapper.appendChild(inner);
+                msgsEl.appendChild(wrapper);
+                msgsEl.scrollTop = msgsEl.scrollHeight;
             }
 
             function showTyping() {
                 var el = document.createElement('div');
-                el.className = 'typing-indicator';
+                el.className = 'typing';
                 el.id = 'typingIndicator';
                 el.setAttribute('role', 'status');
                 el.setAttribute('aria-label', 'Assistant is typing');
-                el.innerHTML = '<span></span><span></span><span></span>';
-                messagesDiv.appendChild(el);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                for (var i = 0; i < 3; i++) {
+                    el.appendChild(document.createElement('span'));
+                }
+                msgsEl.appendChild(el);
+                msgsEl.scrollTop = msgsEl.scrollHeight;
             }
 
             function hideTyping() {
@@ -304,30 +342,37 @@ data:
             function getDemoResponse(message) {
                 var msg = message.toLowerCase();
                 if (msg.includes('balance')) {
-                    return "Your Account Balances:\n\nChecking ****1234: $5,432.10\nSavings ****5678: $15,750.25\nCredit ****9012: $2,340.50 available";
+                    return 'Your Account Balances:\n\nChecking ****1234: $5,432.10\nSavings ****5678: $15,750.25\nCredit ****9012: $2,340.50 available\n\nTotal net worth: $23,522.85';
                 } else if (msg.includes('transfer')) {
-                    return "Let's set up your transfer.\n\nPlease provide:\n- Amount (e.g. $100)\n- Destination account number\n\nAll transfers are secured with 2-factor authentication.";
+                    return 'Transfer Setup:\n\nFrom: Checking ****1234 ($5,432.10)\n\nPlease provide:\n- Amount (e.g. $100)\n- Destination account\n\nAll transfers secured with 2-factor authentication.';
                 } else if (msg.includes('transaction')) {
-                    return "Recent Transactions:\n\nToday: Starbucks -$5.85\nYesterday: Direct Deposit +$3,500.00\nFeb 13: Amazon -$67.42\nFeb 12: Electric Bill -$142.30\n\nCurrent Balance: $5,432.10";
+                    return 'Recent Transactions (Checking ****1234):\n\nToday     Starbucks Coffee      -$5.85\nToday     Direct Deposit     +$3,500.00\nMar 22    Amazon Prime          -$67.42\nMar 21    Electric Bill        -$142.30\nMar 20    Grocery Store         -$89.15\n\nCurrent Balance: $5,432.10';
                 } else if (msg.includes('atm') || msg.includes('location')) {
-                    return "Nearby ATMs:\n\n1. 123 Main St (0.3 mi)\n2. 456 Oak Ave (0.7 mi)\n3. 789 Pine Rd (1.2 mi)\n\nAll ATMs are fee-free for SecureBank customers.";
-                } else if (msg.includes('help')) {
-                    return "I can help with:\n\n- Check account balances\n- View recent transactions\n- Transfer money between accounts\n- Find nearby ATMs\n- Pay bills\n\nJust type your question or use the quick actions above!";
+                    return 'Nearby SecureBank ATMs:\n\n1. 123 Main St (0.3 mi) - 24/7\n2. 456 Oak Ave (0.7 mi) - 24/7\n3. 789 Pine Rd (1.2 mi) - 6AM-11PM\n\nAll ATMs are fee-free for SecureBank customers.\nDeposit-enabled ATMs marked with (D).';
+                } else if (msg.includes('help') || msg.includes('what can')) {
+                    return 'I can help with:\n\n- Check account balances\n- View recent transactions\n- Transfer money between accounts\n- Find nearby ATMs\n- Pay bills and schedule payments\n- Set up fraud alerts\n- Investment portfolio overview\n\nJust type your question or use the quick actions!';
+                } else if (msg.includes('bill') || msg.includes('pay')) {
+                    return 'Bill Pay Center:\n\nUpcoming bills:\n- Electric Co.    $142.30  Due Mar 28\n- Internet ISP     $79.99  Due Mar 30\n- Insurance       $210.00  Due Apr 1\n\nWould you like to pay a bill or set up autopay?';
+                } else if (msg.includes('invest') || msg.includes('portfolio')) {
+                    return 'Investment Portfolio:\n\nTotal Value: $45,230.50\nToday: +$312.40 (+0.70%)\n\nHoldings:\n- VOO (S&P 500)     $25,100  +1.2%\n- QQQ (Nasdaq)      $12,430  +0.8%\n- BND (Bonds)        $7,700  +0.1%\n\nDividends this month: $85.20';
+                } else if (msg.includes('fraud') || msg.includes('alert') || msg.includes('security')) {
+                    return 'Security Status: All Clear\n\nFraud Protection: Active\nLast scan: 2 minutes ago\n\nRecent alerts: None\n2FA: Enabled\nLogin notifications: On\n\nWant to review security settings or report suspicious activity?';
                 } else {
-                    return 'You said: "' + message + '"\n\nI can help with balance inquiries, transactions, transfers, and more. Try asking about your balance!';
+                    return 'You said: "' + message + '"\n\nI can help with balances, transactions, transfers, bill pay, ATM locations, investments, and security alerts.\n\nTry asking about any of these!';
                 }
             }
 
             async function sendMsg() {
-                var message = input.value.trim();
-                if (!message) return;
+                var message = inputEl.value.trim();
+                if (!message || sendBtn.disabled) return;
 
                 sendBtn.disabled = true;
-                input.disabled = true;
-                announcer.textContent = 'Processing your message';
+                inputEl.disabled = true;
+                sugsEl.style.display = 'none';
 
                 addMsg(message, true);
-                input.value = '';
+                inputEl.value = '';
+                inputEl.style.height = 'auto';
                 showTyping();
 
                 try {
@@ -341,27 +386,24 @@ data:
                     addMsg(data.response || data.body || 'Response received.', false);
                 } catch (error) {
                     hideTyping();
-                    if (!navigator.onLine) {
-                        addErrorMsg('You appear to be offline. Showing demo responses.');
-                    }
                     addMsg(getDemoResponse(message), false);
                 }
 
                 sendBtn.disabled = false;
-                input.disabled = false;
-                input.focus();
-                announcer.textContent = 'Response received';
+                inputEl.disabled = false;
+                inputEl.focus();
             }
 
             function quickSend(text) {
-                input.value = text;
+                inputEl.value = text;
                 sendMsg();
             }
 
-            window.onload = function() { input.focus(); };
+            window.onload = function() { inputEl.focus(); };
         </script>
     </body>
     </html>
+
 ---
 apiVersion: apps/v1
 kind: Deployment
